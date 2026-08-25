@@ -1,0 +1,565 @@
+{
+  "summary": {
+    "clean_match": 35,
+    "batch_aggregation": 10,
+    "normal_lag": 5,
+    "refund_pair": 2,
+    "garbled_utr": 3,
+    "rounding_noise": 2,
+    "missing_bank_credit": 2,
+    "duplicate_settlement": 1,
+    "orphan_ledger_entry": 1
+  },
+  "total_records": 61,
+  "records": [
+    {
+      "record_id": "ORD-1000",
+      "order_id": "ORD-1000",
+      "razorpay_payment_id": "pay_TTxsxQQYkeUo4E",
+      "settlement_id": "setl_CLN000",
+      "utr": "RZP2026080100UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1001",
+      "order_id": "ORD-1001",
+      "razorpay_payment_id": "pay_TTxtRFaaOOTqyZ",
+      "settlement_id": "setl_CLN001",
+      "utr": "RZP2026080101UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1002",
+      "order_id": "ORD-1002",
+      "razorpay_payment_id": "pay_TTxtyhVPFLVr1Y",
+      "settlement_id": "setl_CLN002",
+      "utr": "RZP2026080102UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1003",
+      "order_id": "ORD-1003",
+      "razorpay_payment_id": "pay_TTxvMR37pU1Iz3",
+      "settlement_id": "setl_CLN003",
+      "utr": "RZP2026080103UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1004",
+      "order_id": "ORD-1004",
+      "razorpay_payment_id": "pay_TTxvmJU67Y2e0f",
+      "settlement_id": "setl_CLN004",
+      "utr": "RZP2026080104UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1005",
+      "order_id": "ORD-1005",
+      "razorpay_payment_id": "pay_TTxwKOzYg3ryXL",
+      "settlement_id": "setl_CLN005",
+      "utr": "RZP2026080105UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1006",
+      "order_id": "ORD-1006",
+      "razorpay_payment_id": "pay_TTxwzHAdq6zGZH",
+      "settlement_id": "setl_CLN006",
+      "utr": "RZP2026080106UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1007",
+      "order_id": "ORD-1007",
+      "razorpay_payment_id": "pay_TTxxOmL50Xji2G",
+      "settlement_id": "setl_CLN007",
+      "utr": "RZP2026080107UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1008",
+      "order_id": "ORD-1008",
+      "razorpay_payment_id": "pay_TTxy4qpBmnetZe",
+      "settlement_id": "setl_CLN008",
+      "utr": "RZP2026080108UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1009",
+      "order_id": "ORD-1009",
+      "razorpay_payment_id": "pay_TTxyYvLbYwqfW8",
+      "settlement_id": "setl_CLN009",
+      "utr": "RZP2026080109UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1010",
+      "order_id": "ORD-1010",
+      "razorpay_payment_id": "pay_SYN01015eByIHqrh",
+      "settlement_id": "setl_CLN010",
+      "utr": "RZP2026080110UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1011",
+      "order_id": "ORD-1011",
+      "razorpay_payment_id": "pay_SYN011L9qhdL6nml",
+      "settlement_id": "setl_CLN011",
+      "utr": "RZP2026080111UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1012",
+      "order_id": "ORD-1012",
+      "razorpay_payment_id": "pay_SYN012OJxYnyPCRz",
+      "settlement_id": "setl_CLN012",
+      "utr": "RZP2026080112UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1013",
+      "order_id": "ORD-1013",
+      "razorpay_payment_id": "pay_SYN0132eh4e6hDmm",
+      "settlement_id": "setl_CLN013",
+      "utr": "RZP2026080113UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1014",
+      "order_id": "ORD-1014",
+      "razorpay_payment_id": "pay_SYN014FHG4DxfsgV",
+      "settlement_id": "setl_CLN014",
+      "utr": "RZP2026080114UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1015",
+      "order_id": "ORD-1015",
+      "razorpay_payment_id": "pay_SYN015dkL3ONo4Uz",
+      "settlement_id": "setl_CLN015",
+      "utr": "RZP2026080115UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1016",
+      "order_id": "ORD-1016",
+      "razorpay_payment_id": "pay_SYN016duSD88KxKq",
+      "settlement_id": "setl_CLN016",
+      "utr": "RZP2026080116UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1017",
+      "order_id": "ORD-1017",
+      "razorpay_payment_id": "pay_SYN017mZ8uKR99GA",
+      "settlement_id": "setl_CLN017",
+      "utr": "RZP2026080117UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1018",
+      "order_id": "ORD-1018",
+      "razorpay_payment_id": "pay_SYN018nZwYR0IGxg",
+      "settlement_id": "setl_CLN018",
+      "utr": "RZP2026080118UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1019",
+      "order_id": "ORD-1019",
+      "razorpay_payment_id": "pay_SYN0196qsXSgvbUR",
+      "settlement_id": "setl_CLN019",
+      "utr": "RZP2026080119UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1020",
+      "order_id": "ORD-1020",
+      "razorpay_payment_id": "pay_SYN020QvcnaXVUBu",
+      "settlement_id": "setl_CLN020",
+      "utr": "RZP2026080120UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1021",
+      "order_id": "ORD-1021",
+      "razorpay_payment_id": "pay_SYN021VSPj3SW5u4",
+      "settlement_id": "setl_CLN021",
+      "utr": "RZP2026080121UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1022",
+      "order_id": "ORD-1022",
+      "razorpay_payment_id": "pay_SYN022L7tygSqdxJ",
+      "settlement_id": "setl_CLN022",
+      "utr": "RZP2026080122UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1023",
+      "order_id": "ORD-1023",
+      "razorpay_payment_id": "pay_SYN023IoFnTrf31y",
+      "settlement_id": "setl_CLN023",
+      "utr": "RZP2026080123UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1024",
+      "order_id": "ORD-1024",
+      "razorpay_payment_id": "pay_SYN0240H341kvhux",
+      "settlement_id": "setl_CLN024",
+      "utr": "RZP2026080124UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1025",
+      "order_id": "ORD-1025",
+      "razorpay_payment_id": "pay_SYN025ftp5ElpR3E",
+      "settlement_id": "setl_CLN025",
+      "utr": "RZP2026080125UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1026",
+      "order_id": "ORD-1026",
+      "razorpay_payment_id": "pay_SYN0263JN6bx8bsS",
+      "settlement_id": "setl_CLN026",
+      "utr": "RZP2026080126UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1027",
+      "order_id": "ORD-1027",
+      "razorpay_payment_id": "pay_SYN027rRy3ZPYVQa",
+      "settlement_id": "setl_CLN027",
+      "utr": "RZP2026080127UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1028",
+      "order_id": "ORD-1028",
+      "razorpay_payment_id": "pay_SYN028tRTa0oVMhH",
+      "settlement_id": "setl_CLN028",
+      "utr": "RZP2026080128UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1029",
+      "order_id": "ORD-1029",
+      "razorpay_payment_id": "pay_SYN029Fubd3J3j3t",
+      "settlement_id": "setl_CLN029",
+      "utr": "RZP2026080129UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1030",
+      "order_id": "ORD-1030",
+      "razorpay_payment_id": "pay_SYN0309X4bAFe7Tf",
+      "settlement_id": "setl_CLN030",
+      "utr": "RZP2026080130UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1031",
+      "order_id": "ORD-1031",
+      "razorpay_payment_id": "pay_SYN031CpAwVcIeoF",
+      "settlement_id": "setl_CLN031",
+      "utr": "RZP2026080131UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1032",
+      "order_id": "ORD-1032",
+      "razorpay_payment_id": "pay_SYN032sVW0Cy6xv8",
+      "settlement_id": "setl_CLN032",
+      "utr": "RZP2026080132UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1033",
+      "order_id": "ORD-1033",
+      "razorpay_payment_id": "pay_SYN033SSm9PHBZE0",
+      "settlement_id": "setl_CLN033",
+      "utr": "RZP2026080133UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1034",
+      "order_id": "ORD-1034",
+      "razorpay_payment_id": "pay_SYN034iFW876ygBI",
+      "settlement_id": "setl_CLN034",
+      "utr": "RZP2026080134UTR",
+      "category": "clean_match",
+      "description": "Clean match across ledger, settlement, and bank statement."
+    },
+    {
+      "record_id": "ORD-1035",
+      "order_id": "ORD-1035",
+      "razorpay_payment_id": "pay_SYN100GQvfU3DP2k",
+      "settlement_id": "setl_BAT000",
+      "utr": "RZP2026080135UTR",
+      "category": "batch_aggregation",
+      "description": "Batched settlement (setl_BAT000) combining pay_SYN100GQvfU3DP2k and pay_SYN1018YarHy6WG9 into one bank credit."
+    },
+    {
+      "record_id": "ORD-1036",
+      "order_id": "ORD-1036",
+      "razorpay_payment_id": "pay_SYN1018YarHy6WG9",
+      "settlement_id": "setl_BAT000",
+      "utr": "RZP2026080135UTR",
+      "category": "batch_aggregation",
+      "description": "Batched settlement (setl_BAT000) combining pay_SYN100GQvfU3DP2k and pay_SYN1018YarHy6WG9 into one bank credit."
+    },
+    {
+      "record_id": "ORD-1037",
+      "order_id": "ORD-1037",
+      "razorpay_payment_id": "pay_SYN1022myq2mVY2m",
+      "settlement_id": "setl_BAT001",
+      "utr": "RZP2026080136UTR",
+      "category": "batch_aggregation",
+      "description": "Batched settlement (setl_BAT001) combining pay_SYN1022myq2mVY2m and pay_SYN103GFlySYKVea into one bank credit."
+    },
+    {
+      "record_id": "ORD-1038",
+      "order_id": "ORD-1038",
+      "razorpay_payment_id": "pay_SYN103GFlySYKVea",
+      "settlement_id": "setl_BAT001",
+      "utr": "RZP2026080136UTR",
+      "category": "batch_aggregation",
+      "description": "Batched settlement (setl_BAT001) combining pay_SYN1022myq2mVY2m and pay_SYN103GFlySYKVea into one bank credit."
+    },
+    {
+      "record_id": "ORD-1039",
+      "order_id": "ORD-1039",
+      "razorpay_payment_id": "pay_SYN104NapbVMpFJf",
+      "settlement_id": "setl_BAT002",
+      "utr": "RZP2026080137UTR",
+      "category": "batch_aggregation",
+      "description": "Batched settlement (setl_BAT002) combining pay_SYN104NapbVMpFJf and pay_SYN1059Hn2tcUlOS into one bank credit."
+    },
+    {
+      "record_id": "ORD-1040",
+      "order_id": "ORD-1040",
+      "razorpay_payment_id": "pay_SYN1059Hn2tcUlOS",
+      "settlement_id": "setl_BAT002",
+      "utr": "RZP2026080137UTR",
+      "category": "batch_aggregation",
+      "description": "Batched settlement (setl_BAT002) combining pay_SYN104NapbVMpFJf and pay_SYN1059Hn2tcUlOS into one bank credit."
+    },
+    {
+      "record_id": "ORD-1041",
+      "order_id": "ORD-1041",
+      "razorpay_payment_id": "pay_SYN106dEoh4LlvGQ",
+      "settlement_id": "setl_BAT003",
+      "utr": "RZP2026080138UTR",
+      "category": "batch_aggregation",
+      "description": "Batched settlement (setl_BAT003) combining pay_SYN106dEoh4LlvGQ and pay_SYN107k1SgzY2AlM into one bank credit."
+    },
+    {
+      "record_id": "ORD-1042",
+      "order_id": "ORD-1042",
+      "razorpay_payment_id": "pay_SYN107k1SgzY2AlM",
+      "settlement_id": "setl_BAT003",
+      "utr": "RZP2026080138UTR",
+      "category": "batch_aggregation",
+      "description": "Batched settlement (setl_BAT003) combining pay_SYN106dEoh4LlvGQ and pay_SYN107k1SgzY2AlM into one bank credit."
+    },
+    {
+      "record_id": "ORD-1043",
+      "order_id": "ORD-1043",
+      "razorpay_payment_id": "pay_SYN108rZ7Tb2rwOG",
+      "settlement_id": "setl_BAT004",
+      "utr": "RZP2026080139UTR",
+      "category": "batch_aggregation",
+      "description": "Batched settlement (setl_BAT004) combining pay_SYN108rZ7Tb2rwOG and pay_SYN109WJcqWVCF7T into one bank credit."
+    },
+    {
+      "record_id": "ORD-1044",
+      "order_id": "ORD-1044",
+      "razorpay_payment_id": "pay_SYN109WJcqWVCF7T",
+      "settlement_id": "setl_BAT004",
+      "utr": "RZP2026080139UTR",
+      "category": "batch_aggregation",
+      "description": "Batched settlement (setl_BAT004) combining pay_SYN108rZ7Tb2rwOG and pay_SYN109WJcqWVCF7T into one bank credit."
+    },
+    {
+      "record_id": "ORD-1045",
+      "order_id": "ORD-1045",
+      "razorpay_payment_id": "pay_SYN200vFkHybFnKa",
+      "settlement_id": "setl_LAG000",
+      "utr": "RZP2026080140UTR",
+      "category": "normal_lag",
+      "description": "Normal settlement lag of 5 days."
+    },
+    {
+      "record_id": "ORD-1046",
+      "order_id": "ORD-1046",
+      "razorpay_payment_id": "pay_SYN201zpPidMBjrF",
+      "settlement_id": "setl_LAG001",
+      "utr": "RZP2026080141UTR",
+      "category": "normal_lag",
+      "description": "Normal settlement lag of 5 days."
+    },
+    {
+      "record_id": "ORD-1047",
+      "order_id": "ORD-1047",
+      "razorpay_payment_id": "pay_SYN202vNXJEhFC5X",
+      "settlement_id": "setl_LAG002",
+      "utr": "RZP2026080142UTR",
+      "category": "normal_lag",
+      "description": "Normal settlement lag of 5 days."
+    },
+    {
+      "record_id": "ORD-1048",
+      "order_id": "ORD-1048",
+      "razorpay_payment_id": "pay_SYN203ejO92ZBLsS",
+      "settlement_id": "setl_LAG003",
+      "utr": "RZP2026080143UTR",
+      "category": "normal_lag",
+      "description": "Normal settlement lag of 5 days."
+    },
+    {
+      "record_id": "ORD-1049",
+      "order_id": "ORD-1049",
+      "razorpay_payment_id": "pay_SYN204zIno9GTRSM",
+      "settlement_id": "setl_LAG004",
+      "utr": "RZP2026080144UTR",
+      "category": "normal_lag",
+      "description": "Normal settlement lag of 5 days."
+    },
+    {
+      "record_id": "ORD-1050",
+      "order_id": "ORD-1050",
+      "razorpay_payment_id": "pay_SYN300dNHsyU78sw",
+      "settlement_id": "setl_RFD000",
+      "utr": "RZP2026080145UTR",
+      "category": "refund_pair",
+      "description": "Refund pair entry with negative settlement and bank debit."
+    },
+    {
+      "record_id": "ORD-1051",
+      "order_id": "ORD-1051",
+      "razorpay_payment_id": "pay_SYN301yjKrOTqUr9",
+      "settlement_id": "setl_RFD001",
+      "utr": "RZP2026080146UTR",
+      "category": "refund_pair",
+      "description": "Refund pair entry with negative settlement and bank debit."
+    },
+    {
+      "record_id": "ORD-1052",
+      "order_id": "ORD-1052",
+      "razorpay_payment_id": "pay_SYN400RrKQhMuerI",
+      "settlement_id": "setl_GAR000",
+      "utr": "RZP2026080147UTR",
+      "category": "garbled_utr",
+      "description": "Garbled UTR in bank narration: 'NEFT-RZP2026080147-RAZORPAY' vs true UTR 'RZP2026080147UTR'."
+    },
+    {
+      "record_id": "ORD-1053",
+      "order_id": "ORD-1053",
+      "razorpay_payment_id": "pay_SYN401ekT49n9dpk",
+      "settlement_id": "setl_GAR001",
+      "utr": "RZP2026080148UTR",
+      "category": "garbled_utr",
+      "description": "Garbled UTR in bank narration: 'CMS/NEFT/RZPXXXX080148UTR/RAZORPAY' vs true UTR 'RZP2026080148UTR'."
+    },
+    {
+      "record_id": "ORD-1054",
+      "order_id": "ORD-1054",
+      "razorpay_payment_id": "pay_SYN402s3PoLW1Szt",
+      "settlement_id": "setl_GAR002",
+      "utr": "RZP2026080149UTR",
+      "category": "garbled_utr",
+      "description": "Garbled UTR in bank narration: 'INB-UTR-2026080149UTR-RZP' vs true UTR 'RZP2026080149UTR'."
+    },
+    {
+      "record_id": "ORD-1055",
+      "order_id": "ORD-1055",
+      "razorpay_payment_id": "pay_SYN500WioTPxJNTu",
+      "settlement_id": "setl_RND000",
+      "utr": "RZP2026080150UTR",
+      "category": "rounding_noise",
+      "description": "Rounding noise discrepancy: settlement net 47746 vs bank credit 47748."
+    },
+    {
+      "record_id": "ORD-1056",
+      "order_id": "ORD-1056",
+      "razorpay_payment_id": "pay_SYN501guoFNIQVYx",
+      "settlement_id": "setl_RND001",
+      "utr": "RZP2026080151UTR",
+      "category": "rounding_noise",
+      "description": "Rounding noise discrepancy: settlement net 50968 vs bank credit 50967."
+    },
+    {
+      "record_id": "ORD-1057",
+      "order_id": "ORD-1057",
+      "razorpay_payment_id": "pay_SYN600UAF5qRbgks",
+      "settlement_id": "setl_MIS000",
+      "utr": "RZP2026080152UTR",
+      "category": "missing_bank_credit",
+      "description": "Settlement setl_MIS000 marked as settled, but bank credit is missing."
+    },
+    {
+      "record_id": "ORD-1058",
+      "order_id": "ORD-1058",
+      "razorpay_payment_id": "pay_SYN601kShWqPtK3X",
+      "settlement_id": "setl_MIS001",
+      "utr": "RZP2026080153UTR",
+      "category": "missing_bank_credit",
+      "description": "Settlement setl_MIS001 marked as settled, but bank credit is missing."
+    },
+    {
+      "record_id": "ORD-1059",
+      "order_id": "ORD-1059",
+      "razorpay_payment_id": "pay_SYN700d4X21fQCet",
+      "settlement_id": "setl_DUP001A,setl_DUP001B",
+      "utr": "RZP2026080154UTR,RZP2026080155UTR",
+      "category": "duplicate_settlement",
+      "description": "Payment pay_SYN700d4X21fQCet was settled twice (setl_DUP001A and setl_DUP001B)."
+    },
+    {
+      "record_id": "ORD-1060",
+      "order_id": "ORD-1060",
+      "razorpay_payment_id": "pay_SYN8007WsfmBXIMa",
+      "settlement_id": null,
+      "utr": null,
+      "category": "orphan_ledger_entry",
+      "description": "Ledger entry ORD-1060 marked as paid but has no matching Razorpay settlement or bank credit."
+    }
+  ]
+}
