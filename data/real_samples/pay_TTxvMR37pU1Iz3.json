@@ -1,0 +1,33 @@
+{
+  "id": "pay_TTxvMR37pU1Iz3",
+  "entity": "payment",
+  "amount": 54400,
+  "currency": "INR",
+  "status": "captured",
+  "order_id": "order_TTxhPH2CQ520m1",
+  "invoice_id": null,
+  "international": false,
+  "method": "netbanking",
+  "amount_refunded": 0,
+  "refund_status": null,
+  "captured": true,
+  "description": "ORD-1003",
+  "card_id": null,
+  "bank": "UTBI",
+  "wallet": null,
+  "vpa": null,
+  "email": "test.buyer@example.com",
+  "contact": "+919909196619",
+  "notes": [],
+  "fee": 1284,
+  "tax": 196,
+  "error_code": null,
+  "error_description": null,
+  "error_source": null,
+  "error_step": null,
+  "error_reason": null,
+  "acquirer_data": {
+    "bank_transaction_id": "6222658"
+  },
+  "created_at": 1787652806
+}

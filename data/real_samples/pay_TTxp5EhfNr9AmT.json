@@ -1,0 +1,33 @@
+{
+  "id": "pay_TTxp5EhfNr9AmT",
+  "entity": "payment",
+  "amount": 49900,
+  "currency": "INR",
+  "status": "failed",
+  "order_id": "order_TTxhKi0M4HZoeY",
+  "invoice_id": null,
+  "international": false,
+  "method": "netbanking",
+  "amount_refunded": 0,
+  "refund_status": null,
+  "captured": false,
+  "description": "ORD-1000",
+  "card_id": null,
+  "bank": "BARB_R",
+  "wallet": null,
+  "vpa": null,
+  "email": "test.buyer@example.com",
+  "contact": "+919909196619",
+  "notes": [],
+  "fee": null,
+  "tax": null,
+  "error_code": "BAD_REQUEST_ERROR",
+  "error_description": "Your payment has been cancelled. Try again or complete the payment later.",
+  "error_source": "customer",
+  "error_step": "payment_authentication",
+  "error_reason": "payment_cancelled",
+  "acquirer_data": {
+    "bank_transaction_id": null
+  },
+  "created_at": 1787652450
+}
