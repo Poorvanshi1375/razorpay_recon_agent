@@ -215,6 +215,8 @@ def verify_record(
             api_key=api_key,
         )
 
+    verifier_agreement = "agreed" if verified_cat == init_cat else "corrected"
+
     # Write stage verification event to SQLite audit log
     log_event(
         stage="verify",
@@ -224,6 +226,7 @@ def verify_record(
         evidence={
             "initial_category": init_cat,
             "verified_category": verified_cat,
+            "verifier_agreement": verifier_agreement,
             "tier_used": tier,
             "evidence": ev,
         },

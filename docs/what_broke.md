@@ -67,3 +67,12 @@ This document logs real engineering incidents, failure cases, and architectural 
 * **What Broke**: A substantial portion of project work (Phases 3 through 6, unit tests, and multiple bug fixes) remained uncommitted in the working tree across an extended development window.
 * **How Caught**: A `git status` check revealed over 10 untracked and modified files across multiple components.
 * **Lesson**: Features and bug fixes should be committed in small, logical units immediately after verification to maintain a clean revision history and prevent monolithic commit batching.
+
+---
+
+## 9. Phase 5 & Spec Correction: Verifier Agreement vs. Resolution Status Discrepancy
+
+* **What Broke**: `PROJECT_SPEC.md` originally stated that agreement between initial classification and verifier resulted in `status="resolved"`, whereas disagreement resulted in `status="needs_review"`. In practice, the Gemini verifier agent successfully resolved and corrected misclassifications (such as `ORD-1061`, where initial `reference_formatting_issue` was corrected to `amount_mismatch`) with high confidence (0.95) while writing `status="resolved"`. As a result, `needs_review` had never fired on real dataset records (remaining at 0), while verifier corrections were happening silently without explicit UI visibility.
+* **How Caught**: Deep verification audit of the `GET /exceptions` payload and `engine/verifier.py` logic.
+* **How Fixed**: Corrected `PROJECT_SPEC.md` §10 to clarify that `status` reflects verifier execution validity and confidence (reserving `needs_review` for verifier failure modes like API errors or invalid categories), and introduced an additive `verifier_agreement` attribute (`"agreed"` vs. `"corrected"`) across `engine/verifier.py`, `api/main.py`, and `dashboard/lib/types.ts` to make second-pass verifier corrections explicitly visible.
+

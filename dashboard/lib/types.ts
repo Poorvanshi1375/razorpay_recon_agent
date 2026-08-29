@@ -50,6 +50,7 @@ export interface ExceptionRecord {
   tier_used: number;
   initial_category: string;
   verified_category: string;
+  verifier_agreement: 'agreed' | 'corrected';
   status: string;
   verifier_confidence: number;
   verifier_reasoning: string;

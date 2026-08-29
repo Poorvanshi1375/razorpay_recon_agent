@@ -136,7 +136,7 @@ Structured, staged event log: every ingest/match/classify/resolve step writes a 
 
 ## 10. Phase 5 — Verifier Agent (self-verifying loop)
 
-Low-confidence Tier 3 classifications get a second, independent LLM pass — given the first classification and explicitly asked to find fault with it, not confirm it. Agreement → resolved. Disagreement → flagged as `needs_review`, distinct from both "matched" and "unresolved." This is the direct answer to the track's "verification capacity, not generation speed" framing.
+Low-confidence Tier 3 classifications get a second, independent LLM pass — given the first classification and explicitly asked to find fault with it, not confirm it. The record's `status` reflects whether the verifier produced a successful, valid, confident classification (either via Tier 1 auto-approval or a successful Gemini verifier call), NOT whether it agreed with the initial classification; `needs_review` is reserved for verifier failure modes (API errors across candidates, invalid category returned, or missing API key with a non-zero amount delta). Separately, an additive `verifier_agreement` attribute ("agreed" / "corrected") records whether the final verified category matched the initial classification, and does not influence `status`. This provides an explicit, transparent audit of verifier corrections while keeping resolved exceptions fully classified.
 
 ## 11. Phase 6 — API + Dashboard
 

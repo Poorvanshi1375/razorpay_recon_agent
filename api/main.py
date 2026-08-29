@@ -142,12 +142,14 @@ def get_exceptions():
 
     for v in verif_results:
         c = class_map.get(v.record_id)
+        agreement = "agreed" if v.verified_category == v.initial_category else "corrected"
         exceptions.append({
             "order_id": v.record_id,
             "payment_id": v.payment_id,
             "tier_used": v.tier_used,
             "initial_category": v.initial_category,
             "verified_category": v.verified_category,
+            "verifier_agreement": agreement,
             "status": v.status,
             "verifier_confidence": v.verifier_confidence,
             "verifier_reasoning": v.verifier_reasoning,
