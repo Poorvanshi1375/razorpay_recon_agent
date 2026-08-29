@@ -26,12 +26,13 @@ ALLOWED_CATEGORIES = {
     "unresolved",
 }
 
-# Model fallback sequence for robust API execution (gemini-3.6-flash is primary active free-tier model)
+# Model fallback sequence for robust API execution (gemini-3.5-flash-lite is primary active free-tier model)
 CANDIDATE_MODELS: List[str] = [
+    "gemini-3.5-flash-lite",
     "gemini-3.6-flash",
-    "gemini-2.5-flash",
-    "gemini-1.5-flash",
+    "gemini-3.1-flash-lite",
 ]
+
 
 
 def classify_tier3_llm(

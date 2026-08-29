@@ -11,6 +11,8 @@ import os
 import sys
 from typing import Any, Dict, List
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from engine.classifier.pipeline import run_classifier
 from engine.matcher import run_matcher
 from engine.verifier import run_verifier
