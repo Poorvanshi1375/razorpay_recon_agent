@@ -619,6 +619,63 @@ def build_dataset() -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], List[Di
         "description": f"Ledger entry {order_id_orp} marked as paid but has no matching Razorpay settlement or bank credit."
     })
 
+    # ---------------------------------------------------------
+    # 10. Unexplained Bank Amount Discrepancy (~1 record)
+    # ---------------------------------------------------------
+    record_counter += 1
+    utr_counter += 1
+
+    order_id_unexp = f"ORD-{record_counter}"
+    pay_id_unexp = generate_random_payment_id(900)
+    order_amount_unexp = 100000  # ₹1,000.00 gross ledger
+    settle_gross_unexp = 103500  # ₹1,035.00 gross settlement (gross delta: 3500 paise > 500 paise tolerance)
+
+    order_dt = base_date + timedelta(days=29)
+    settle_dt = order_dt + timedelta(days=2)
+    utr_unexp = generate_utr(utr_counter)  # e.g. RZP2026080157UTR
+
+    fee_u, tax_u, net_u = calculate_fees_and_tax(settle_gross_unexp)
+    # Short by odd arbitrary delta: 4321 paise -> bank credited amount = net_u - 4321
+    bank_credited_unexp = net_u - 4321  # 96422 paise
+
+    setl_id_unexp = "setl_UNEXP001"
+
+    ledger_records.append({
+        "order_id": order_id_unexp,
+        "razorpay_payment_id": pay_id_unexp,
+        "order_amount": order_amount_unexp,
+        "order_date": fmt_date(order_dt),
+        "status": "paid"
+    })
+
+    settlement_records.append({
+        "settlement_id": setl_id_unexp,
+        "payment_ids": json.dumps([pay_id_unexp]),
+        "amount": settle_gross_unexp,
+        "fees": fee_u,
+        "tax": tax_u,
+        "net_settled_amount": net_u,
+        "utr": utr_unexp,
+        "settled_at": fmt_date(settle_dt)
+    })
+
+    # Bank record with garbled UTR format AND arbitrary short amount
+    bank_records.append({
+        "txn_date": fmt_date(settle_dt),
+        "credited_amount": bank_credited_unexp,
+        "narration": f"NEFT-RZP202608{utr_counter:04d}XUNEXP-RAZORPAY"
+    })
+
+    ground_truth_records.append({
+        "record_id": order_id_unexp,
+        "order_id": order_id_unexp,
+        "razorpay_payment_id": pay_id_unexp,
+        "settlement_id": setl_id_unexp,
+        "utr": utr_unexp,
+        "category": "unexplained_bank_amount_discrepancy",
+        "description": f"Settlement {setl_id_unexp} bank credit was matched via fuzzy UTR but short by odd arbitrary delta of 4321 paise."
+    })
+
     return ledger_records, settlement_records, bank_records, ground_truth_records
 
 

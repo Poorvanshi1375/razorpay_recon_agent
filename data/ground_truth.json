@@ -8,9 +8,10 @@
     "rounding_noise": 2,
     "missing_bank_credit": 2,
     "duplicate_settlement": 1,
-    "orphan_ledger_entry": 1
+    "orphan_ledger_entry": 1,
+    "unexplained_bank_amount_discrepancy": 1
   },
-  "total_records": 61,
+  "total_records": 62,
   "records": [
     {
       "record_id": "ORD-1000",
@@ -560,6 +561,15 @@
       "utr": null,
       "category": "orphan_ledger_entry",
       "description": "Ledger entry ORD-1060 marked as paid but has no matching Razorpay settlement or bank credit."
+    },
+    {
+      "record_id": "ORD-1061",
+      "order_id": "ORD-1061",
+      "razorpay_payment_id": "pay_SYN900jzVzUnWcAP",
+      "settlement_id": "setl_UNEXP001",
+      "utr": "RZP2026080157UTR",
+      "category": "unexplained_bank_amount_discrepancy",
+      "description": "Settlement setl_UNEXP001 bank credit was matched via fuzzy UTR but short by odd arbitrary delta of 4321 paise."
     }
   ]
 }
