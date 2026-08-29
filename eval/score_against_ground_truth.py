@@ -9,7 +9,7 @@ AGENTS.md HONESTY MECHANISM:
 import json
 import os
 import sys
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -48,24 +48,27 @@ def load_ground_truth(gt_path: str = "data/ground_truth.json") -> Dict[str, Any]
         return json.load(f)
 
 
-def evaluate_pipeline(gt_path: str = "data/ground_truth.json") -> Dict[str, Any]:
+def evaluate_pipeline(gt_path: str = "data/ground_truth.json", run_id: Optional[str] = None) -> Dict[str, Any]:
     """
     Execute full pipeline (matcher -> classifier -> verifier) and compare
     decisions against ground_truth.json using strict, principled evaluation rules.
     """
+    import uuid
+
+    active_run_id = run_id or str(uuid.uuid4())
     ground_truth_data = load_ground_truth(gt_path)
     gt_records = {r["order_id"]: r for r in ground_truth_data["records"]}
 
     # Step 1: Phase 2 Matcher
-    match_results = run_matcher()
+    match_results = run_matcher(run_id=active_run_id)
     match_map = {m.order_id: m for m in match_results}
 
     # Step 2: Phase 3 Classifier
-    class_results = run_classifier(match_results)
+    class_results = run_classifier(match_results, run_id=active_run_id)
     class_map = {c.record_id: c for c in class_results}
 
     # Step 3: Phase 5 Verifier
-    verif_results = run_verifier(class_results)
+    verif_results = run_verifier(class_results, run_id=active_run_id)
     verif_map = {v.record_id: v for v in verif_results}
 
     # Score calculation

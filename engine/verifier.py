@@ -180,6 +180,7 @@ def verify_record(
     classification_result: ClassificationResult,
     confidence_auto_approve: float = 0.85,
     api_key: Optional[str] = None,
+    run_id: Optional[str] = None,
 ) -> VerificationResult:
     """
     Perform second-pass verification on a ClassificationResult.
@@ -227,6 +228,7 @@ def verify_record(
             "evidence": ev,
         },
         explanation=reasoning,
+        run_id=run_id,
     )
 
     return VerificationResult(
@@ -245,16 +247,20 @@ def verify_record(
 def run_verifier(
     classification_results: Optional[List[ClassificationResult]] = None,
     api_key: Optional[str] = None,
+    run_id: Optional[str] = None,
 ) -> List[VerificationResult]:
     """
     Execute Phase 5 Verifier Agent across all exception classification results.
     """
+    import uuid
+    active_run_id = run_id or uuid.uuid4().hex[:12]
+
     if classification_results is None:
-        classification_results = run_classifier()
+        classification_results = run_classifier(run_id=active_run_id)
 
     verification_results: List[VerificationResult] = []
     for cr in classification_results:
-        vr = verify_record(cr, api_key=api_key)
+        vr = verify_record(cr, api_key=api_key, run_id=active_run_id)
         verification_results.append(vr)
 
     return verification_results

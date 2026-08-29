@@ -107,12 +107,16 @@ def reconcile_ledger(
     fuzzy_threshold: float = 70.0,
     date_window_days: int = 10,
     max_fuzzy_amount_delta_paise: int = 10000,
+    run_id: Optional[str] = None,
 ) -> List[MatchResult]:
     """
     Reconcile ledger entries against settlements and bank statement entries.
 
     Returns a list of MatchResult objects.
     """
+    import uuid
+    active_run_id = run_id or uuid.uuid4().hex[:12]
+
     payment_to_setls, setl_is_batch = build_settlement_indexes(settlement_records)
 
     # Pre-index bank rows that have exact UTR matches
@@ -137,6 +141,7 @@ def reconcile_ledger(
             confidence=1.0,
             evidence=dict(l_rec),
             explanation=f"Ingested ledger record {order_id} (payment {pay_id}).",
+            run_id=active_run_id,
         )
 
         matching_setls = payment_to_setls.get(pay_id, [])
@@ -322,16 +327,17 @@ def reconcile_ledger(
                 confidence=res.confidence,
                 evidence=res.evidence,
                 explanation=f"Phase 2 matcher classified record as {res.match_status} with confidence {res.confidence}.",
+                run_id=active_run_id,
             )
             results.append(res)
 
     return results
 
 
-def run_matcher() -> List[MatchResult]:
+def run_matcher(run_id: Optional[str] = None) -> List[MatchResult]:
     """Execute Phase 2 matching pipeline on default data files."""
     ledger, settlement, bank = load_datasets()
-    return reconcile_ledger(ledger, settlement, bank)
+    return reconcile_ledger(ledger, settlement, bank, run_id=run_id)
 
 
 def main() -> None:

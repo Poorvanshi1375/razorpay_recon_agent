@@ -8,6 +8,7 @@ grounded in SQLite audit trail data.
 
 import json
 import os
+import uuid
 from typing import Any, Dict, List, Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -74,16 +75,17 @@ def run_reconciliation():
     Execute full end-to-end reconciliation pipeline:
     Matching Engine -> Exception Classifier -> Verifier Agent.
     """
+    run_id = str(uuid.uuid4())
     # 1. Matching
-    matcher_results = run_matcher()
+    matcher_results = run_matcher(run_id=run_id)
     clean_matches = [m for m in matcher_results if m.match_status == "matched"]
     non_matched = [m for m in matcher_results if m.match_status != "matched"]
 
     # 2. Classifier
-    classification_results = run_classifier(matcher_results)
+    classification_results = run_classifier(matcher_results, run_id=run_id)
 
     # 3. Verifier
-    verification_results = run_verifier(classification_results)
+    verification_results = run_verifier(classification_results, run_id=run_id)
 
     resolved_count = len(clean_matches) + sum(1 for v in verification_results if v.status == "resolved")
     needs_review_count = sum(1 for v in verification_results if v.status == "needs_review")
@@ -104,10 +106,12 @@ def run_reconciliation():
     LATEST_CACHE["classification_results"] = classification_results
     LATEST_CACHE["verification_results"] = verification_results
     LATEST_CACHE["summary"] = summary
+    LATEST_CACHE["run_id"] = run_id
 
     return {
         "status": "success",
         "message": "Reconciliation pipeline executed successfully.",
+        "run_id": run_id,
         "summary": summary,
     }
 
@@ -159,25 +163,23 @@ def get_exceptions():
 
 
 @app.get("/audit/{record_id}")
-def get_audit_trail(record_id: str):
-    """Retrieve full SQLite audit trail history for a specific order/payment record."""
-    logs = get_audit_logs(record_id=record_id)
+def get_audit_trail(record_id: str, all_runs: bool = Query(False, description="Set to true to include historical events across prior runs.")):
+    """Retrieve SQLite audit trail history for a specific order/payment record."""
+    logs = get_audit_logs(record_id=record_id, all_runs=all_runs)
     if not logs:
-        # Try searching by stage if record_id didn't match directly
-        logs = get_audit_logs()
-        filtered = [log for log in logs if log.get("record_id") == record_id]
-        if not filtered:
-            return {
-                "status": "not_found",
-                "record_id": record_id,
-                "audit_events": [],
-                "message": f"No audit log events found for record_id '{record_id}'",
-            }
-        logs = filtered
+        return {
+            "status": "not_found",
+            "record_id": record_id,
+            "audit_events": [],
+            "message": f"No audit log events found for record_id '{record_id}'",
+        }
+
+    latest_run_id = logs[-1]["run_id"] if logs else None
 
     return {
         "status": "success",
         "record_id": record_id,
+        "run_id": latest_run_id,
         "total_events": len(logs),
         "audit_events": logs,
     }
@@ -205,9 +207,9 @@ def ask_settlement_qa(payload: QuestionRequest):
     is_record_specific = record_id is not None
 
     if is_record_specific:
-        audit_events = get_audit_logs(record_id=record_id)
+        audit_events = get_audit_logs(record_id=record_id, all_runs=False)
     else:
-        audit_events = get_audit_logs()
+        audit_events = get_audit_logs(all_runs=False)
 
     # If record-specific search returned no logs (non-existent record_id)
     if is_record_specific and not audit_events:
@@ -284,7 +286,7 @@ Provide a clear, professional 2-3 sentence general answer.
 """
 
         response = client.models.generate_content(
-            model="gemini-3.6-flash",
+            model="gemini-3.5-flash-lite",
             contents=prompt,
             config=types.GenerateContentConfig(temperature=0.1),
         )

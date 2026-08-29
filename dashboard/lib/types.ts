@@ -22,6 +22,7 @@ export interface SummaryData {
 export interface ReconcileRunResponse {
   status: string;
   message: string;
+  run_id?: string;
   summary: SummaryData;
 }
 
@@ -64,6 +65,7 @@ export interface ExceptionsResponse {
 
 export interface AuditEvent {
   id: number;
+  run_id?: string;
   timestamp: string;
   stage: string;
   record_id: string;
@@ -76,6 +78,7 @@ export interface AuditEvent {
 export interface AuditTrailResponse {
   status: string;
   record_id: string;
+  run_id?: string;
   total_events: number;
   audit_events: AuditEvent[];
   message?: string;

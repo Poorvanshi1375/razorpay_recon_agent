@@ -37,7 +37,7 @@ class ClassificationResult:
         return asdict(self)
 
 
-def classify_record(match_result: MatchResult) -> ClassificationResult:
+def classify_record(match_result: MatchResult, run_id: Optional[str] = None) -> ClassificationResult:
     """
     Classify a single MatchResult through Tier 1 -> Tier 2 -> Tier 3 pipeline.
 
@@ -94,6 +94,7 @@ def classify_record(match_result: MatchResult) -> ClassificationResult:
                     confidence=conf,
                     evidence=evidence,
                     explanation=promotion_msg,
+                    run_id=run_id,
                 )
 
     # Write stage classification event to SQLite audit log
@@ -104,6 +105,7 @@ def classify_record(match_result: MatchResult) -> ClassificationResult:
         confidence=conf,
         evidence=evidence,
         explanation=exp,
+        run_id=run_id,
     )
 
     return ClassificationResult(
@@ -120,20 +122,24 @@ def classify_record(match_result: MatchResult) -> ClassificationResult:
 
 def run_classifier(
     match_results: Optional[List[MatchResult]] = None,
+    run_id: Optional[str] = None,
 ) -> List[ClassificationResult]:
     """
     Execute Phase 3 Exception Classification on non-matched MatchResults.
 
     If match_results is not provided, runs Phase 2 matcher first.
     """
+    import uuid
+    active_run_id = run_id or uuid.uuid4().hex[:12]
+
     if match_results is None:
-        match_results = run_matcher()
+        match_results = run_matcher(run_id=active_run_id)
 
     non_matched = [m for m in match_results if m.match_status != "matched"]
 
     results: List[ClassificationResult] = []
     for m in non_matched:
-        classified = classify_record(m)
+        classified = classify_record(m, run_id=active_run_id)
         results.append(classified)
 
     return results
