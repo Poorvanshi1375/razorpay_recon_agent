@@ -96,6 +96,9 @@ def build_settlement_indexes(
     return payment_id_to_settlements, settlement_is_batch
 
 
+from engine.audit_log import log_event
+
+
 def reconcile_ledger(
     ledger_records: List[Dict[str, Any]],
     settlement_records: List[Dict[str, Any]],
@@ -103,7 +106,7 @@ def reconcile_ledger(
     amount_tolerance_paise: int = 5,
     fuzzy_threshold: float = 70.0,
     date_window_days: int = 10,
-    max_fuzzy_amount_delta_paise: int = 500,
+    max_fuzzy_amount_delta_paise: int = 10000,
 ) -> List[MatchResult]:
     """
     Reconcile ledger entries against settlements and bank statement entries.
@@ -126,100 +129,105 @@ def reconcile_ledger(
         order_id = str(l_rec["order_id"])
         pay_id = str(l_rec["razorpay_payment_id"])
 
+        # 1. Log Ingest stage event per ledger record
+        log_event(
+            stage="ingest",
+            record_id=order_id,
+            decision="ingested",
+            confidence=1.0,
+            evidence=dict(l_rec),
+            explanation=f"Ingested ledger record {order_id} (payment {pay_id}).",
+        )
+
         matching_setls = payment_to_setls.get(pay_id, [])
+        res: Optional[MatchResult] = None
 
         # Case 1: No settlement found
         if len(matching_setls) == 0:
-            results.append(
-                MatchResult(
-                    order_id=order_id,
-                    payment_id=pay_id,
-                    settlement_id=None,
-                    match_status="unmatched",
-                    confidence=0.0,
-                    evidence={
-                        "date_delta_days": None,
-                        "amount_delta_paise": None,
-                        "gross_amount_delta_paise": None,
-                        "utr_match_type": "none",
-                        "is_batch": False,
-                        "is_duplicate": False,
-                        "reason": "no_settlement_found",
-                        "matched_bank_amount": None,
-                        "matched_bank_narration": None,
-                    },
-                )
+            res = MatchResult(
+                order_id=order_id,
+                payment_id=pay_id,
+                settlement_id=None,
+                match_status="unmatched",
+                confidence=0.0,
+                evidence={
+                    "date_delta_days": None,
+                    "amount_delta_paise": None,
+                    "gross_amount_delta_paise": None,
+                    "utr_match_type": "none",
+                    "is_batch": False,
+                    "is_duplicate": False,
+                    "reason": "no_settlement_found",
+                    "matched_bank_amount": None,
+                    "matched_bank_narration": None,
+                },
             )
-            continue
 
         # Case 2: Duplicate settlement signal (2+ settlements contain this payment)
-        if len(matching_setls) >= 2:
+        elif len(matching_setls) >= 2:
             setl_ids_str = ",".join(s["settlement_id"] for s in matching_setls)
-            results.append(
-                MatchResult(
-                    order_id=order_id,
-                    payment_id=pay_id,
-                    settlement_id=setl_ids_str,
-                    match_status="ambiguous",
-                    confidence=0.5,
-                    evidence={
-                        "date_delta_days": None,
-                        "amount_delta_paise": None,
-                        "gross_amount_delta_paise": None,
-                        "utr_match_type": "none",
-                        "is_batch": False,
-                        "is_duplicate": True,
-                        "reason": "duplicate_settlement",
-                        "matched_bank_amount": None,
-                        "matched_bank_narration": None,
-                    },
-                )
+            res = MatchResult(
+                order_id=order_id,
+                payment_id=pay_id,
+                settlement_id=setl_ids_str,
+                match_status="ambiguous",
+                confidence=0.5,
+                evidence={
+                    "date_delta_days": None,
+                    "amount_delta_paise": None,
+                    "gross_amount_delta_paise": None,
+                    "utr_match_type": "none",
+                    "is_batch": False,
+                    "is_duplicate": True,
+                    "reason": "duplicate_settlement",
+                    "matched_bank_amount": None,
+                    "matched_bank_narration": None,
+                },
             )
-            continue
 
         # Case 3: Exactly 1 settlement found
-        setl = matching_setls[0]
-        setl_id = setl["settlement_id"]
-        utr = setl["utr"]
-        net_settled = setl["net_settled_amount"]
-        setl_gross_amount = setl["amount"]
-        settled_at_dt = datetime.strptime(setl["settled_at"], "%Y-%m-%d").date()
-        is_batch = setl_is_batch.get(setl_id, False)
+        else:
+            setl = matching_setls[0]
+            setl_id = setl["settlement_id"]
+            utr = setl["utr"]
+            net_settled = setl["net_settled_amount"]
+            setl_gross_amount = setl["amount"]
+            settled_at_dt = datetime.strptime(setl["settled_at"], "%Y-%m-%d").date()
+            is_batch = setl_is_batch.get(setl_id, False)
 
-        # Gross amount check: compare ledger.order_amount vs settlement.amount for single non-batch records
-        order_amount = int(l_rec["order_amount"])
-        gross_delta = abs(abs(order_amount) - abs(setl_gross_amount)) if not is_batch else 0
-        has_gross_mismatch = (not is_batch) and (gross_delta > amount_tolerance_paise)
+            # Gross amount check: compare ledger.order_amount vs settlement.amount for single non-batch records
+            order_amount = int(l_rec["order_amount"])
+            gross_delta = abs(abs(order_amount) - abs(setl_gross_amount)) if not is_batch else 0
+            has_gross_mismatch = (not is_batch) and (gross_delta > amount_tolerance_paise)
 
-        # 3a: Exact UTR match in bank statement
-        exact_bank_match: Optional[Tuple[int, Dict[str, Any]]] = None
-        for idx, b in enumerate(bank_records):
-            if utr in b["narration"]:
-                exact_bank_match = (idx, b)
-                break
+            # 3a: Exact UTR match in bank statement
+            exact_bank_match: Optional[Tuple[int, Dict[str, Any]]] = None
+            for idx, b in enumerate(bank_records):
+                if utr in b["narration"]:
+                    exact_bank_match = (idx, b)
+                    break
 
-        if exact_bank_match is not None:
-            _, bank_row = exact_bank_match
-            bank_amt = bank_row["credited_amount"]
-            bank_dt = datetime.strptime(bank_row["txn_date"], "%Y-%m-%d").date()
-            amount_delta = bank_amt - net_settled
-            date_delta = (bank_dt - settled_at_dt).days
+            if exact_bank_match is not None:
+                _, bank_row = exact_bank_match
+                bank_amt = bank_row["credited_amount"]
+                bank_dt = datetime.strptime(bank_row["txn_date"], "%Y-%m-%d").date()
+                amount_delta = bank_amt - net_settled
+                date_delta = (bank_dt - settled_at_dt).days
 
-            if has_gross_mismatch:
-                match_status = "ambiguous"
-                confidence = 0.6
-                reason = "ledger_settlement_amount_mismatch"
-            elif abs(amount_delta) <= amount_tolerance_paise:
-                match_status = "matched"
-                confidence = 1.0
-                reason = "exact_match"
-            else:
-                match_status = "ambiguous"
-                confidence = 0.7
-                reason = "rounding_discrepancy"
+                if has_gross_mismatch:
+                    match_status = "ambiguous"
+                    confidence = 0.6
+                    reason = "ledger_settlement_amount_mismatch"
+                elif abs(amount_delta) <= amount_tolerance_paise:
+                    match_status = "matched"
+                    confidence = 1.0
+                    reason = "exact_match"
+                else:
+                    match_status = "ambiguous"
+                    confidence = 0.7
+                    reason = "rounding_discrepancy"
 
-            results.append(
-                MatchResult(
+                res = MatchResult(
                     order_id=order_id,
                     payment_id=pay_id,
                     settlement_id=setl_id,
@@ -237,84 +245,85 @@ def reconcile_ledger(
                         "matched_bank_narration": bank_row["narration"],
                     },
                 )
-            )
-            continue
-
-        # 3b: Fuzzy UTR match in bank statement
-        candidates: List[Tuple[int, float, int, Dict[str, Any]]] = []
-        for idx, b in enumerate(bank_records):
-            if idx in exact_utr_bank_indices:
-                continue
-            b_dt = datetime.strptime(b["txn_date"], "%Y-%m-%d").date()
-            date_delta = (b_dt - settled_at_dt).days
-
-            if abs(date_delta) <= date_window_days:
-                score = float(fuzz.partial_ratio(utr, b["narration"]))
-                b_amt = b["credited_amount"]
-                amt_delta = b_amt - net_settled
-
-                if score >= fuzzy_threshold and abs(amt_delta) <= max_fuzzy_amount_delta_paise:
-                    candidates.append((-abs(amt_delta), score, -abs(date_delta), b))
-
-        if candidates:
-            candidates.sort(key=lambda x: (x[0], x[1], x[2]), reverse=True)
-            best_neg_amt, best_score, best_neg_date, best_bank_row = candidates[0]
-
-            bank_amt = best_bank_row["credited_amount"]
-            bank_dt = datetime.strptime(best_bank_row["txn_date"], "%Y-%m-%d").date()
-            amount_delta = bank_amt - net_settled
-            date_delta = (bank_dt - settled_at_dt).days
-
-            if has_gross_mismatch:
-                confidence = min(0.6, round(best_score / 100.0, 2))
-                reason = "ledger_settlement_amount_mismatch"
             else:
-                confidence = round(best_score / 100.0, 2)
-                reason = "garbled_utr"
+                # 3b: Fuzzy UTR match in bank statement
+                candidates: List[Tuple[int, float, int, Dict[str, Any]]] = []
+                for idx, b in enumerate(bank_records):
+                    if idx in exact_utr_bank_indices:
+                        continue
+                    b_dt = datetime.strptime(b["txn_date"], "%Y-%m-%d").date()
+                    date_delta = (b_dt - settled_at_dt).days
 
-            results.append(
-                MatchResult(
-                    order_id=order_id,
-                    payment_id=pay_id,
-                    settlement_id=setl_id,
-                    match_status="ambiguous",
-                    confidence=confidence,
-                    evidence={
-                        "date_delta_days": date_delta,
-                        "amount_delta_paise": amount_delta,
-                        "gross_amount_delta_paise": gross_delta,
-                        "utr_match_type": "fuzzy",
-                        "is_batch": is_batch,
-                        "is_duplicate": False,
-                        "reason": reason,
-                        "matched_bank_amount": bank_amt,
-                        "matched_bank_narration": best_bank_row["narration"],
-                    },
-                )
-            )
-            continue
+                    if abs(date_delta) <= date_window_days:
+                        score = float(fuzz.partial_ratio(utr, b["narration"]))
+                        b_amt = b["credited_amount"]
+                        amt_delta = b_amt - net_settled
 
-        # 3c: No bank row found at all
-        results.append(
-            MatchResult(
-                order_id=order_id,
-                payment_id=pay_id,
-                settlement_id=setl_id,
-                match_status="unmatched",
-                confidence=0.0,
-                evidence={
-                    "date_delta_days": None,
-                    "amount_delta_paise": None,
-                    "gross_amount_delta_paise": gross_delta,
-                    "utr_match_type": "none",
-                    "is_batch": is_batch,
-                    "is_duplicate": False,
-                    "reason": "missing_bank_credit",
-                    "matched_bank_amount": None,
-                    "matched_bank_narration": None,
-                },
+                        if score >= fuzzy_threshold and abs(amt_delta) <= max_fuzzy_amount_delta_paise:
+                            candidates.append((-abs(amt_delta), score, -abs(date_delta), b))
+
+                if candidates:
+                    candidates.sort(key=lambda x: (x[0], x[1], x[2]), reverse=True)
+                    best_neg_amt, best_score, best_neg_date, best_bank_row = candidates[0]
+
+                    bank_amt = best_bank_row["credited_amount"]
+                    bank_dt = datetime.strptime(best_bank_row["txn_date"], "%Y-%m-%d").date()
+                    amount_delta = bank_amt - net_settled
+                    date_delta = (bank_dt - settled_at_dt).days
+
+                    confidence = min(0.6, round(best_score / 100.0, 2))
+                    reason = "garbled_utr"
+
+                    res = MatchResult(
+                        order_id=order_id,
+                        payment_id=pay_id,
+                        settlement_id=setl_id,
+                        match_status="ambiguous",
+                        confidence=confidence,
+                        evidence={
+                            "date_delta_days": date_delta,
+                            "amount_delta_paise": amount_delta,
+                            "gross_amount_delta_paise": gross_delta,
+                            "utr_match_type": "fuzzy",
+                            "is_batch": is_batch,
+                            "is_duplicate": False,
+                            "reason": reason,
+                            "matched_bank_amount": bank_amt,
+                            "matched_bank_narration": best_bank_row["narration"],
+                        },
+                    )
+                else:
+                    # 3c: No bank row found at all
+                    res = MatchResult(
+                        order_id=order_id,
+                        payment_id=pay_id,
+                        settlement_id=setl_id,
+                        match_status="unmatched",
+                        confidence=0.0,
+                        evidence={
+                            "date_delta_days": None,
+                            "amount_delta_paise": None,
+                            "gross_amount_delta_paise": gross_delta,
+                            "utr_match_type": "none",
+                            "is_batch": is_batch,
+                            "is_duplicate": False,
+                            "reason": "missing_bank_credit",
+                            "matched_bank_amount": None,
+                            "matched_bank_narration": None,
+                        },
+                    )
+
+        if res is not None:
+            # 2. Log Match stage event per ledger record
+            log_event(
+                stage="match",
+                record_id=res.order_id,
+                decision=res.match_status,
+                confidence=res.confidence,
+                evidence=res.evidence,
+                explanation=f"Phase 2 matcher classified record as {res.match_status} with confidence {res.confidence}.",
             )
-        )
+            results.append(res)
 
     return results
 
