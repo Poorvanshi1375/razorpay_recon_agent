@@ -85,7 +85,7 @@ flowchart TD
    - *Tier 3*: Gemini Flash LLM integration (`gemini-3.5-flash-lite`) for complex edge case reasoning.
 4. **Phase 4: SQLite Audit Engine**: Writes structured JSON audit events (`ingest`, `match`, `classify`, `verify`, `rule_promotion`) to `data/audit_log.db`.
 5. **Phase 5: Self-Verifying Review Agent**: Independent auditor evaluating initial classifications to prevent false positives and correct category misallocations.
-6. **Phase 6: API & Settlement Q&A**: FastAPI server exposing endpoints `/reconcile`, `/exceptions`, `/audit-trail`, and `/ask`.
+6. **Phase 6: API & Settlement Q&A**: FastAPI server exposing verified REST endpoints (`/reconcile/run`, `/results`, `/exceptions`, `/audit/{record_id}`, `/ask`).
 
 ---
 
@@ -136,12 +136,25 @@ python eval/score_against_ground_truth.py
 uvicorn api.main:app --reload --port 8000
 ```
 * **Interactive OpenAPI Docs**: Navigate to [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+#### **API Endpoint Reference**
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/` | Health check & route index |
+| `POST` | `/reconcile/run` | Execute full multi-source reconciliation pipeline |
+| `GET` | `/results` | Fetch clean matched settlement records |
+| `GET` | `/exceptions` | Fetch categorized and verified exception records |
+| `GET` | `/audit/{record_id}` | Fetch append-only audit trail logs for a record |
+| `POST` | `/ask` | Settlement Q&A grounded in SQLite audit evidence |
+
 * **Sample Settlement Q&A Request**:
 ```bash
 curl -X POST "http://127.0.0.1:8000/ask" \
      -H "Content-Type: application/json" \
      -d '{"question": "Why did ORD-1061 fail clean reconciliation?"}'
 ```
+
 
 ### 4. Run Unit Test Suite
 ```bash

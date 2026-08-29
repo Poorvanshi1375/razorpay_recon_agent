@@ -1,4 +1,3 @@
 {
-  "reason=garbled_utr|utr=fuzzy|duplicate=False|batch=False -> reference_formatting_issue": 21,
-  "reason=garbled_utr|utr=fuzzy|duplicate=False|batch=False -> unresolved": 8
+  "reason=garbled_utr|utr=fuzzy|duplicate=False|batch=False -> reference_formatting_issue": 2
 }
