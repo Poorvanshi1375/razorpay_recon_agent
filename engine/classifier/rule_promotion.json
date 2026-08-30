@@ -1,3 +1,4 @@
 {
-  "reason=garbled_utr|utr=fuzzy|duplicate=False|batch=False -> reference_formatting_issue": 14
+  "reason=garbled_utr|utr=fuzzy|duplicate=False|batch=False -> reference_formatting_issue": 26,
+  "reason=garbled_utr|utr=fuzzy|duplicate=False|batch=False -> amount_mismatch": 1
 }

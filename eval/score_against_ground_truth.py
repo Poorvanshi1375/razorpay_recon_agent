@@ -191,6 +191,36 @@ def main() -> None:
     try:
         results = evaluate_pipeline()
         print_evaluation_report(results)
+
+        # Write computed report snapshot to eval/latest_eval_report.json
+        from datetime import datetime, timezone
+
+        all_cats = sorted(list(set(list(results['cat_tp'].keys()) + list(results['cat_fp'].keys()) + list(results['cat_fn'].keys()))))
+        per_category = {
+            cat: {
+                "tp": results['cat_tp'].get(cat, 0),
+                "fp": results['cat_fp'].get(cat, 0),
+                "fn": results['cat_fn'].get(cat, 0),
+            }
+            for cat in all_cats
+        }
+
+        report = {
+            "accuracy_percent": round(results["accuracy_percent"], 2),
+            "correct": results["correct_classifications"],
+            "total": results["total_records"],
+            "correct_over_total": f"{results['correct_classifications']}/{results['total_records']}",
+            "false_positive_count": results["false_positives"],
+            "needs_review_count": results["needs_review_count"],
+            "per_category_breakdown": per_category,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
+
+        out_path = os.path.join(os.path.dirname(__file__), "latest_eval_report.json")
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(report, f, indent=2)
+        print(f"[EVAL] Snapshot written to {out_path}")
+
     except Exception as exc:
         print(f"[ERROR] Evaluation failed: {exc}", file=sys.stderr)
         sys.exit(1)

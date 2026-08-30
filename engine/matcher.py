@@ -156,6 +156,7 @@ def reconcile_ledger(
                 match_status="unmatched",
                 confidence=0.0,
                 evidence={
+                    "order_date": str(l_rec.get("order_date")),
                     "date_delta_days": None,
                     "amount_delta_paise": None,
                     "gross_amount_delta_paise": None,
@@ -178,6 +179,7 @@ def reconcile_ledger(
                 match_status="ambiguous",
                 confidence=0.5,
                 evidence={
+                    "order_date": str(l_rec.get("order_date")),
                     "date_delta_days": None,
                     "amount_delta_paise": None,
                     "gross_amount_delta_paise": None,
@@ -239,6 +241,7 @@ def reconcile_ledger(
                     match_status=match_status,
                     confidence=confidence,
                     evidence={
+                        "order_date": str(l_rec.get("order_date")),
                         "date_delta_days": date_delta,
                         "amount_delta_paise": amount_delta,
                         "gross_amount_delta_paise": gross_delta,
@@ -286,6 +289,7 @@ def reconcile_ledger(
                         match_status="ambiguous",
                         confidence=confidence,
                         evidence={
+                            "order_date": str(l_rec.get("order_date")),
                             "date_delta_days": date_delta,
                             "amount_delta_paise": amount_delta,
                             "gross_amount_delta_paise": gross_delta,
@@ -306,6 +310,7 @@ def reconcile_ledger(
                         match_status="unmatched",
                         confidence=0.0,
                         evidence={
+                            "order_date": str(l_rec.get("order_date")),
                             "date_delta_days": None,
                             "amount_delta_paise": None,
                             "gross_amount_delta_paise": gross_delta,

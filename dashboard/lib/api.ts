@@ -3,8 +3,10 @@ import {
   ResultsResponse,
   ExceptionsResponse,
   AuditTrailResponse,
+  LatestAuditRunResponse,
   AskResponse,
   ReconcileRunResponse,
+  EvalReport,
 } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000';
@@ -39,6 +41,10 @@ export async function getExceptions(): Promise<ExceptionsResponse> {
   return fetchAPI<ExceptionsResponse>('/exceptions');
 }
 
+export async function getLatestAuditRun(): Promise<LatestAuditRunResponse> {
+  return fetchAPI<LatestAuditRunResponse>('/audit/run/latest');
+}
+
 export async function getAuditTrail(recordId: string): Promise<AuditTrailResponse> {
   return fetchAPI<AuditTrailResponse>(`/audit/${encodeURIComponent(recordId)}`);
 }
@@ -54,4 +60,12 @@ export async function runReconciliation(): Promise<ReconcileRunResponse> {
   return fetchAPI<ReconcileRunResponse>('/reconcile/run', {
     method: 'POST',
   });
+}
+
+export async function getEvalReport(): Promise<EvalReport> {
+  const res = await fetch('/api/eval-report', { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch offline evaluation report: HTTP ${res.status}`);
+  }
+  return res.json();
 }

@@ -690,6 +690,7 @@ def write_csv(path: str, fieldnames: List[str], rows: List[Dict[str, Any]]) -> N
 
 def main() -> None:
     """Main execution function for dataset generator."""
+    random.seed(SEED)
     ledger, settlement, bank, ground_truth = build_dataset()
 
     write_csv(LEDGER_PATH, ["order_id", "razorpay_payment_id", "order_amount", "order_date", "status"], ledger)

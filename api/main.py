@@ -92,6 +92,15 @@ def run_reconciliation():
     total_records = len(matcher_results)
     match_rate = (len(clean_matches) / total_records) * 100 if total_records > 0 else 0.0
 
+    # Calculate period_start and period_end min/max order_date across matcher_results
+    order_dates = [
+        m.evidence["order_date"]
+        for m in matcher_results
+        if isinstance(m.evidence, dict) and m.evidence.get("order_date")
+    ]
+    period_start = min(order_dates) if order_dates else None
+    period_end = max(order_dates) if order_dates else None
+
     summary = {
         "total_records": total_records,
         "clean_matches": len(clean_matches),
@@ -99,6 +108,8 @@ def run_reconciliation():
         "verified_resolved": resolved_count,
         "needs_review": needs_review_count,
         "match_rate_percent": round(match_rate, 2),
+        "period_start": period_start,
+        "period_end": period_end,
     }
 
     # Store cache
@@ -161,6 +172,19 @@ def get_exceptions():
         "status": "success",
         "total_exceptions": len(exceptions),
         "exceptions": exceptions,
+    }
+
+
+@app.get("/audit/run/latest")
+def get_latest_run_audit_logs():
+    """Retrieve all audit events from the most recent run_id, across all records."""
+    logs = get_audit_logs(all_runs=False)
+    latest_run_id = logs[0]["run_id"] if logs else None
+    return {
+        "status": "success",
+        "run_id": latest_run_id,
+        "total_events": len(logs),
+        "audit_events": logs,
     }
 
 

@@ -17,6 +17,8 @@ export interface SummaryData {
   verified_resolved: number;
   needs_review: number;
   match_rate_percent: number;
+  period_start?: string | null;
+  period_end?: string | null;
 }
 
 export interface ReconcileRunResponse {
@@ -85,6 +87,13 @@ export interface AuditTrailResponse {
   message?: string;
 }
 
+export interface LatestAuditRunResponse {
+  status: string;
+  run_id: string | null;
+  total_events: number;
+  audit_events: AuditEvent[];
+}
+
 export interface AskRequest {
   question: string;
   record_id?: string;
@@ -97,4 +106,22 @@ export interface AskResponse {
   answer: string;
   grounded_sources_count: number;
   detail?: string;
+}
+
+export interface CategoryBreakdown {
+  tp: number;
+  fp: number;
+  fn: number;
+}
+
+export interface EvalReport {
+  accuracy_percent: number;
+  correct: number;
+  total: number;
+  correct_over_total: string;
+  false_positive_count: number;
+  needs_review_count: number;
+  per_category_breakdown: Record<string, CategoryBreakdown>;
+  generated_at: string;
+  error?: string;
 }

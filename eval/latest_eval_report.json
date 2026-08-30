@@ -1,0 +1,61 @@
+{
+  "accuracy_percent": 100.0,
+  "correct": 62,
+  "total": 62,
+  "correct_over_total": "62/62",
+  "false_positive_count": 0,
+  "needs_review_count": 0,
+  "per_category_breakdown": {
+    "batch_aggregation": {
+      "tp": 10,
+      "fp": 0,
+      "fn": 0
+    },
+    "clean_match": {
+      "tp": 35,
+      "fp": 0,
+      "fn": 0
+    },
+    "duplicate_settlement": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 0
+    },
+    "garbled_utr": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 0
+    },
+    "missing_bank_credit": {
+      "tp": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    "normal_lag": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0
+    },
+    "orphan_ledger_entry": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 0
+    },
+    "refund_pair": {
+      "tp": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    "rounding_noise": {
+      "tp": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    "unexplained_bank_amount_discrepancy": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 0
+    }
+  },
+  "generated_at": "2026-08-30T14:42:55.490477+00:00"
+}
