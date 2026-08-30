@@ -76,3 +76,11 @@ This document logs real engineering incidents, failure cases, and architectural 
 * **How Caught**: Deep verification audit of the `GET /exceptions` payload and `engine/verifier.py` logic.
 * **How Fixed**: Corrected `PROJECT_SPEC.md` §10 to clarify that `status` reflects verifier execution validity and confidence (reserving `needs_review` for verifier failure modes like API errors or invalid categories), and introduced an additive `verifier_agreement` attribute (`"agreed"` vs. `"corrected"`) across `engine/verifier.py`, `api/main.py`, and `dashboard/lib/types.ts` to make second-pass verifier corrections explicitly visible.
 
+---
+
+## 10. Phase 6: Dataset Generation Seed Initialization Gap
+
+* **What Broke**: A `SEED` constant (`SEED = 42`) existed at top-level in `data/generator.py`, but `random.seed(SEED)` was never invoked inside `main()` when executing dataset generation. As a result, category-to-record assignment could reshuffle between runs even though Faker's own output stayed stable.
+* **How Caught**: Caught by comparing two real `/exceptions` payload captures taken at different points in the build, not by inspecting the code in isolation.
+* **How Fixed**: Added explicit `random.seed(SEED)` call at the beginning of `main()` in `data/generator.py`, guaranteeing 100% reproducible dataset generation and alignment with `ground_truth.json`.
+
