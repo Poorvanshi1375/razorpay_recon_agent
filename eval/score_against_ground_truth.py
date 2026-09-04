@@ -48,48 +48,10 @@ def load_ground_truth(gt_path: str = "data/ground_truth.json") -> Dict[str, Any]
         return json.load(f)
 
 
-def load_results_from_audit_log(db_path: str = "data/audit_log.db"):
-    from engine.audit_log import get_audit_logs
-    logs = get_audit_logs(all_runs=True, db_path=db_path)
-    
-    match_map = {}
-    class_map = {}
-    verif_map = {}
-    
-    class MatchObj:
-        def __init__(self, status):
-            self.match_status = status
-            
-    class ClassObj:
-        def __init__(self, cat):
-            self.category = cat
-            
-    class VerifObj:
-        def __init__(self, status, verified_cat):
-            self.status = status
-            self.verified_category = verified_cat
-
-    for log in logs:
-        stage = log["stage"]
-        rec_id = log["record_id"]
-        decision = log["decision"]
-        evidence = log.get("evidence", {})
-        
-        if stage == "match":
-            match_map[rec_id] = MatchObj(decision)
-        elif stage == "classify":
-            class_map[rec_id] = ClassObj(decision)
-        elif stage == "verify":
-            verified_cat = evidence.get("verified_category", decision)
-            verif_map[rec_id] = VerifObj(decision, verified_cat)
-            
-    return match_map, class_map, verif_map
-
-
-def evaluate_pipeline(gt_path: str = "data/ground_truth.json", run_id: Optional[str] = None, from_db: bool = True) -> Dict[str, Any]:
+def evaluate_pipeline(gt_path: str = "data/ground_truth.json", run_id: Optional[str] = None) -> Dict[str, Any]:
     """
-    Execute full pipeline (matcher -> classifier -> verifier) or load from audit_log.db
-    and compare decisions against ground_truth.json using strict, principled evaluation rules.
+    Execute full pipeline (matcher -> classifier -> verifier) and compare
+    decisions against ground_truth.json using strict, principled evaluation rules.
     """
     import uuid
 
@@ -97,20 +59,17 @@ def evaluate_pipeline(gt_path: str = "data/ground_truth.json", run_id: Optional[
     ground_truth_data = load_ground_truth(gt_path)
     gt_records = {r["order_id"]: r for r in ground_truth_data["records"]}
 
-    if from_db and os.path.exists("data/audit_log.db"):
-        match_map, class_map, verif_map = load_results_from_audit_log("data/audit_log.db")
-    else:
-        # Step 1: Phase 2 Matcher
-        match_results = run_matcher(run_id=active_run_id)
-        match_map = {m.order_id: m for m in match_results}
+    # Step 1: Phase 2 Matcher
+    match_results = run_matcher(run_id=active_run_id)
+    match_map = {m.order_id: m for m in match_results}
 
-        # Step 2: Phase 3 Classifier
-        class_results = run_classifier(match_results, run_id=active_run_id)
-        class_map = {c.record_id: c for c in class_results}
+    # Step 2: Phase 3 Classifier
+    class_results = run_classifier(match_results, run_id=active_run_id)
+    class_map = {c.record_id: c for c in class_results}
 
-        # Step 3: Phase 5 Verifier
-        verif_results = run_verifier(class_results, run_id=active_run_id)
-        verif_map = {v.record_id: v for v in verif_results}
+    # Step 3: Phase 5 Verifier
+    verif_results = run_verifier(class_results, run_id=active_run_id)
+    verif_map = {v.record_id: v for v in verif_results}
 
     # Score calculation
     total_records = len(gt_records)
