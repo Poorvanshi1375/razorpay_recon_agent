@@ -127,11 +127,114 @@ def run_reconciliation():
     }
 
 
+def load_cache_from_db() -> bool:
+    """Load latest run cache from existing audit_log.db if available to avoid auto-rerunning pipeline."""
+    from engine.audit_log import DB_PATH, get_audit_logs
+    if not os.path.exists(DB_PATH):
+        return False
+    logs = get_audit_logs(all_runs=False, db_path=DB_PATH)
+    if not logs:
+        return False
+    
+    stages = set(l["stage"] for l in logs)
+    if "verify" not in stages:
+        return False
+
+    latest_run_id = logs[0]["run_id"]
+    
+    class DummyMatch:
+        def __init__(self, order_id, match_status, evidence):
+            self.order_id = order_id
+            self.match_status = match_status
+            self.evidence = evidence
+
+    class DummyClass:
+        def __init__(self, record_id, category, explanation):
+            self.record_id = record_id
+            self.category = category
+            self.explanation = explanation
+
+    class DummyVerif:
+        def __init__(self, record_id, payment_id, initial_category, verified_category, status, verifier_confidence, verifier_reasoning, tier_used, evidence):
+            self.record_id = record_id
+            self.payment_id = payment_id
+            self.initial_category = initial_category
+            self.verified_category = verified_category
+            self.status = status
+            self.verifier_confidence = verifier_confidence
+            self.verifier_reasoning = verifier_reasoning
+            self.tier_used = tier_used
+            self.evidence = evidence
+
+    match_results = []
+    class_results = []
+    verif_results = []
+
+    for l in logs:
+        st = l["stage"]
+        rec_id = l["record_id"]
+        ev = l["evidence"]
+        if st == "match":
+            match_results.append(DummyMatch(order_id=rec_id, match_status=l["decision"], evidence=ev))
+        elif st == "classify":
+            class_results.append(DummyClass(record_id=rec_id, category=l["decision"], explanation=l["explanation"]))
+        elif st == "verify":
+            inner_ev = ev.get("evidence", {})
+            payment_id = inner_ev.get("razorpay_payment_id", f"pay_{rec_id}")
+            initial_cat = ev.get("initial_category", l["decision"])
+            verified_cat = ev.get("verified_category", l["decision"])
+            tier_used = ev.get("tier_used", 3)
+            verif_results.append(DummyVerif(
+                record_id=rec_id,
+                payment_id=payment_id,
+                initial_category=initial_cat,
+                verified_category=verified_cat,
+                status=l["decision"],
+                verifier_confidence=l["confidence"],
+                verifier_reasoning=l["explanation"],
+                tier_used=tier_used,
+                evidence=inner_ev
+            ))
+
+    clean_matches = [m for m in match_results if m.match_status == "matched"]
+    resolved_count = len(clean_matches) + sum(1 for v in verif_results if v.status == "resolved")
+    needs_review_count = sum(1 for v in verif_results if v.status == "needs_review")
+    total_records = len(match_results)
+    match_rate = (len(clean_matches) / total_records) * 100 if total_records > 0 else 0.0
+
+    order_dates = [
+        m.evidence["order_date"]
+        for m in match_results
+        if isinstance(m.evidence, dict) and m.evidence.get("order_date")
+    ]
+    period_start = min(order_dates) if order_dates else "2026-08-01"
+    period_end = max(order_dates) if order_dates else "2026-08-30"
+
+    summary = {
+        "total_records": total_records,
+        "clean_matches": len(clean_matches),
+        "exceptions_classified": len(class_results),
+        "verified_resolved": resolved_count,
+        "needs_review": needs_review_count,
+        "match_rate_percent": round(match_rate, 2),
+        "period_start": period_start,
+        "period_end": period_end,
+    }
+
+    LATEST_CACHE["matcher_results"] = match_results
+    LATEST_CACHE["classification_results"] = class_results
+    LATEST_CACHE["verification_results"] = verif_results
+    LATEST_CACHE["summary"] = summary
+    LATEST_CACHE["run_id"] = latest_run_id
+    return True
+
+
 @app.get("/results")
 def get_results():
     """Return summary statistics of current reconciliation state."""
     if LATEST_CACHE["summary"] is None:
-        run_reconciliation()
+        if not load_cache_from_db():
+            run_reconciliation()
 
     return {
         "status": "success",
@@ -143,7 +246,8 @@ def get_results():
 def get_exceptions():
     """Return list of all non-matched/classified exception records with verification details."""
     if LATEST_CACHE["verification_results"] is None:
-        run_reconciliation()
+        if not load_cache_from_db():
+            run_reconciliation()
 
     exceptions = []
     verif_results = LATEST_CACHE["verification_results"] or []
