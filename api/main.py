@@ -166,6 +166,11 @@ def load_cache_from_db() -> bool:
             self.tier_used = tier_used
             self.evidence = evidence
 
+    ingest_map = {}
+    for l in logs:
+        if l["stage"] == "ingest":
+            ingest_map[l["record_id"]] = l["evidence"].get("razorpay_payment_id", f"pay_{l['record_id']}")
+
     match_results = []
     class_results = []
     verif_results = []
@@ -180,7 +185,7 @@ def load_cache_from_db() -> bool:
             class_results.append(DummyClass(record_id=rec_id, category=l["decision"], explanation=l["explanation"]))
         elif st == "verify":
             inner_ev = ev.get("evidence", {})
-            payment_id = inner_ev.get("razorpay_payment_id", f"pay_{rec_id}")
+            payment_id = ingest_map.get(rec_id, inner_ev.get("razorpay_payment_id", f"pay_{rec_id}"))
             initial_cat = ev.get("initial_category", l["decision"])
             verified_cat = ev.get("verified_category", l["decision"])
             tier_used = ev.get("tier_used", 3)
