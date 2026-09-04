@@ -123,7 +123,7 @@ Return ONLY a raw JSON object matching this schema:
                     model=model,
                     contents=prompt,
                     config=types.GenerateContentConfig(
-                        temperature=0.1,
+                        temperature=0.0,
                         response_mime_type="application/json",
                     ),
                 )

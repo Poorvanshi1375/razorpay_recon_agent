@@ -149,31 +149,19 @@ export default function ExceptionsPage() {
         </div>
 
         {/* Exceptions Data Table */}
-        <section className="border border-[#c6c6cb] bg-[#fcf9f2] overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <section className="border border-[#c6c6cb] bg-[#fcf9f2] overflow-x-auto shadow-none">
+          <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
-              <tr className="border-b border-[#c6c6cb] bg-[#f1eee7]">
-                <th className="px-6 py-3.5 font-label-caps text-[#45474b] border-r border-[#c6c6cb]">
-                  ORDER ID
-                </th>
-                <th className="px-4 py-3.5 font-label-caps text-[#45474b] text-center border-r border-[#c6c6cb]">
-                  TIER
-                </th>
-                <th className="px-6 py-3.5 font-label-caps text-[#45474b] border-r border-[#c6c6cb]">
-                  INITIAL QUEUE / CATEGORY
-                </th>
-                <th className="px-6 py-3.5 font-label-caps text-[#45474b] border-r border-[#c6c6cb]">
-                  FINAL VERIFIED CATEGORY
-                </th>
-                <th className="px-6 py-3.5 font-label-caps text-[#45474b] border-r border-[#c6c6cb]">
-                  OUTCOME TAG
-                </th>
-                <th className="px-6 py-3.5 font-label-caps text-[#45474b] text-right">
-                  AMOUNT DELTA
-                </th>
+              <tr className="border-b border-[#c6c6cb] bg-[#ebe8e1] font-label-caps text-[#44474d]">
+                <th className="px-6 py-3 border-r border-[#c6c6cb]">ORDER ID</th>
+                <th className="px-4 py-3 border-r border-[#c6c6cb] text-center">TIER</th>
+                <th className="px-6 py-3 border-r border-[#c6c6cb]">INITIAL CATEGORY</th>
+                <th className="px-6 py-3 border-r border-[#c6c6cb]">VERIFIED CATEGORY</th>
+                <th className="px-6 py-3 border-r border-[#c6c6cb]">OUTCOME TAG</th>
+                <th className="px-6 py-3 text-right">AMOUNT DELTA</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#c6c6cb] font-sans font-body-sm">
+            <tbody className="divide-y divide-[#c6c6cb]">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center font-data-sm text-[#76777b]">
@@ -198,12 +186,26 @@ export default function ExceptionsPage() {
                     >
                       {/* ORDER ID */}
                       <td className="px-6 py-4 border-r border-[#c6c6cb]">
-                        <Link
-                          href={`/exceptions/${exc.order_id}`}
-                          className="font-data-md font-medium text-[#010306] group-hover:underline block"
-                        >
-                          {exc.order_id}
-                        </Link>
+                        <div className="flex items-center space-x-2">
+                          <Link
+                            href={`/exceptions/${exc.order_id}`}
+                            className="font-data-md font-medium text-[#010306] group-hover:underline block"
+                          >
+                            {exc.order_id}
+                          </Link>
+                          {/* Inline Outcome Tag on Mobile / Compact screens */}
+                          <span className="md:hidden">
+                            {isCorrected ? (
+                              <span className="inline-block px-1.5 py-0.5 bg-[#ffdad6] text-[#93000a] border border-[#ba1a1a] text-[9px] font-bold uppercase">
+                                CORRECTED
+                              </span>
+                            ) : (
+                              <span className="inline-block px-1.5 py-0.5 bg-[#bfebe7] text-[#00201e] border border-[#244d4b] text-[9px] font-bold uppercase">
+                                AGREED
+                              </span>
+                            )}
+                          </span>
+                        </div>
                       </td>
 
                       {/* TIER */}

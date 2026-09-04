@@ -289,6 +289,13 @@ def ask_settlement_qa(payload: QuestionRequest):
 
 Your answer MUST be strictly grounded in the provided SQLite audit trail evidence below for Order ID {record_id}. Do not invent details. If the evidence contains specific settlement IDs, amounts, or failure reasons, cite them explicitly.
 
+CRITICAL INSTRUCTION ON CLASSIFICATION CATEGORIES:
+- Inspect the 'verify' stage event in the audit trail.
+- The 'verified_category' is the FINAL, AUTHORITATIVE, OVERRIDING classification outcome.
+- The 'initial_category' (when different from 'verified_category') is strictly what Tier 3 first guessed, before the verifier corrected it.
+- You MUST state the 'verified_category' (e.g., amount mismatch / amount_mismatch) as the actual, final, and correct outcome.
+- If you mention 'initial_category' (e.g., reference formatting issue), you MUST explicitly label it only as "what Tier 3 first guessed, before the verifier corrected it." NEVER state the initial_category as the actual failure reason or final outcome.
+
 AUDIT TRAIL EVIDENCE FOR RECORD {record_id}:
 {audit_context}
 
@@ -314,7 +321,7 @@ Provide a clear, professional 2-3 sentence general answer.
         response = client.models.generate_content(
             model="gemini-3.5-flash-lite",
             contents=prompt,
-            config=types.GenerateContentConfig(temperature=0.1),
+            config=types.GenerateContentConfig(temperature=0.0),
         )
 
         answer = response.text.strip() if response and response.text else "No response generated."

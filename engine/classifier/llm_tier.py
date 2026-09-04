@@ -101,7 +101,7 @@ Return ONLY a valid JSON object formatted as follows:
                     contents=prompt,
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
-                        temperature=0.1,
+                        temperature=0.0,
                     ),
                 )
                 if response and response.text:

@@ -1,18 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { askQuestion } from '@/lib/api';
 import { AskResponse } from '@/lib/types';
 
 export default function AskPage() {
-  const [question, setQuestion] = useState<string>('Why did ORD-1061 fail clean matching?');
-  const [recordIdInput, setRecordIdInput] = useState<string>('ORD-1061');
+  const [question, setQuestion] = useState<string>("why didn't ORD-1057 settle?");
+  const [recordIdInput, setRecordIdInput] = useState<string>('');
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [response, setResponse] = useState<AskResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    askQuestion("why didn't ORD-1057 settle?", undefined)
+      .then((res) => {
+        if (isMounted) setResponse(res);
+      })
+      .catch((err) => {
+        if (isMounted) setError(String(err));
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +95,7 @@ export default function AskPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Question Input (Signature/Ledger Line Styling) */}
+              {/* Question Input */}
               <div className="space-y-2">
                 <label className="block font-label-caps text-[#76777b]">
                   USER INQUIRY
@@ -92,7 +110,7 @@ export default function AskPage() {
                 />
               </div>
 
-              {/* Record ID Input (Signature/Ledger Line Styling) */}
+              {/* Record ID Input */}
               <div className="space-y-2">
                 <label className="block font-label-caps text-[#76777b]">
                   RECORD ID (OPTIONAL)
