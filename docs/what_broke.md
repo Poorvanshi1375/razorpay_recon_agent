@@ -84,3 +84,20 @@ This document logs real engineering incidents, failure cases, and architectural 
 * **How Caught**: Caught by comparing two real `/exceptions` payload captures taken at different points in the build, not by inspecting the code in isolation.
 * **How Fixed**: Added explicit `random.seed(SEED)` call at the beginning of `main()` in `data/generator.py`, guaranteeing 100% reproducible dataset generation and alignment with `ground_truth.json`.
 
+---
+
+## 11. Phase 6 & Dashboard: Auto-Rerun-on-Restart Risk in API Cache Initialization
+
+* **What Broke**: The API endpoints `/results` and `/exceptions` in `api/main.py` were originally designed to call `run_reconciliation()` automatically whenever the in-memory `LATEST_CACHE` dictionary was empty — which occurs on every server restart. Given the Tier 3 LLM verifier's known non-determinism on the hardest planted exception (`ORD-1061`), simply restarting the FastAPI server prior to video recording could silently change a verified, 100%-correct audit database state.
+* **How Caught**: Direct code diff review of `api/main.py` before executing server restarts, not by trusting a "looks correct" summary.
+* **How Fixed**: Added `load_cache_from_db()` to `api/main.py`, which reads from the existing `audit_log.db` and reconstructs `LATEST_CACHE` using `get_audit_logs(all_runs=False)`. This ensures GET requests fetch frozen audit state across server restarts without re-invoking `run_reconciliation()`.
+
+---
+
+## 12. Phase 6 & Dashboard: Fabricated Payment ID Fallback in Cache Reconstruction
+
+* **What Broke**: The initial implementation of `load_cache_from_db()` attempted to read `razorpay_payment_id` from the `verify` stage's evidence dictionary, which does not contain that field (payment IDs are only captured in `ingest` stage evidence). As a result, every exception record's `payment_id` silently fell back to a fabricated string like `"pay_ORD-1061"` instead of the real captured Razorpay payment ID (`"pay_SYN900jzVzUnWcAP"`). This bug was completely invisible in the rendered dashboard UI (which does not display a payment ID column).
+* **How Caught**: Raw JSON inspection of the `GET /exceptions` API response payload, caught via direct payload audit rather than relying on UI rendering.
+* **How Fixed**: Updated `load_cache_from_db()` in `api/main.py` to build an `ingest_map` lookup table (`{record_id: razorpay_payment_id}`) from the `ingest` stage logs prior to constructing `DummyVerif` instances, ensuring all exception records preserve their real captured Razorpay payment IDs.
+
+

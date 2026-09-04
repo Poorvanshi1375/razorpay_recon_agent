@@ -156,7 +156,32 @@ curl -X POST "http://127.0.0.1:8000/ask" \
 ```
 
 
-### 4. Run Unit Test Suite
+### 4. Launch Next.js Web Dashboard
+
+The repository includes a modern web dashboard built with Next.js (App Router), TailwindCSS, and Lucide icons.
+
+#### Key Dashboard Pages
+* **Overview (`/`)**: Real-time KPI summary cards (Total Records, Clean Matches, Verified Exceptions, Review Flags) and exception breakdown.
+* **Exceptions Queue (`/exceptions`)**: Filterable exception queue displaying initial vs verified categories, confidence scores, and verifier agreement badges (`AGREED` / `CORRECTED`).
+* **Audit Trail Drilldown (`/exceptions/[recordId]`)**: Complete 4-stage audit history (`ingest`, `match`, `classify`, `verify`), evidence payloads, and verifier reasoning for specific records (e.g., `ORD-1061`).
+* **Settlement Q&A (`/ask`)**: Natural-language chat interface for asking settlement questions grounded directly in SQLite audit evidence.
+
+#### Running the Dashboard
+
+```bash
+cd dashboard
+npm install
+
+# Option A: Development Mode
+npm run dev
+
+# Option B: Production Build (Recommended)
+npm run build
+npm run start
+```
+Access the dashboard at [http://localhost:3000](http://localhost:3000) (ensuring the FastAPI backend is running on `http://127.0.0.1:8000`).
+
+### 5. Run Unit Test Suite
 ```bash
 python -m pytest
 ```
