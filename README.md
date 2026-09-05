@@ -158,7 +158,7 @@ curl -X POST "http://127.0.0.1:8000/ask" \
 
 ### 4. Launch Next.js Web Dashboard
 
-The repository includes a modern web dashboard built with Next.js (App Router), TailwindCSS, and Lucide icons.
+The repository includes a modern web dashboard built with Next.js (App Router) and TailwindCSS.
 
 #### Key Dashboard Pages
 * **Overview (`/`)**: Real-time KPI summary cards (Total Records, Clean Matches, Verified Exceptions, Review Flags) and exception breakdown.
